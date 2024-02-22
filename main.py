@@ -75,6 +75,10 @@ class Snake:
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.display.set_caption("Snake Game")
+
+        pygame.mixer.init()
+        self.play_background_music()
 
         # initialize game window
         self.surface = pygame.display.set_mode((1000, 800))
@@ -84,6 +88,14 @@ class Game:
         self.apple = Apple(self.surface)
         self.apple.draw()
 
+    def play_song(self, name):
+        sound = pygame.mixer.Sound(f"resources/{name}.mp3")
+        pygame.mixer.Sound.play(sound)
+
+    def play_background_music(self):
+        pygame.mixer.music.load("resources/background.mp3")
+        pygame.mixer.music.play()
+
     def play(self):
         self.snake.walk()
         self.apple.draw()
@@ -92,14 +104,16 @@ class Game:
 
         # checking if head of snake touched the apple
         if self.collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
+            self.play_song("touch")
             self.snake.increase_length()
             self.apple.move()
 
         # starting from 3, because snake's head will never collide with second or third block of the body
-        for i in range(1, self.snake.length):
+        for i in range(2, self.snake.length):
             if self.collision(
                 self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]
             ):
+                self.play_song("end")
                 raise "Game Over"
 
     def display_score(self):
@@ -128,6 +142,7 @@ class Game:
         )
         self.surface.blit(line1, (300, 450))
         pygame.display.flip()
+        pygame.mixer.music.pause()
 
     def run(self):
         running = True
@@ -140,6 +155,8 @@ class Game:
                         running = False
 
                     if event.key == K_RETURN:
+                        pygame.mixer.music.unpause()
+
                         pause = False
 
                     if not pause:
