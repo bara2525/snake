@@ -1,2 +1,1 @@
-# About
-Simple snake game
+
