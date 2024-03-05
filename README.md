@@ -1,1 +1,2 @@
+# About
 Simple snake game
